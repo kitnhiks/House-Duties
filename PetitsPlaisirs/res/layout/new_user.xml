@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" style="@style/form">
+	
+	<TableLayout style="@style/header">
+		<TextView style="@style/header.text" android:text="@string/new_user_title" />
+	</TableLayout>	
+	
+	<TextView style="@style/form.intro" android:text="@string/new_users_intro"/>
+ <!-- 1 seul user à la création
+	<LinearLayout android:id="@+id/newUserList" style="@style/form.table"/>
+ -->
+	<LinearLayout style="@style/form.table">
+		<TextView style="@style/form.label" android:text="@string/new_user_name"/>
+		<EditText android:id="@+id/newUserName"
+			android:singleLine="true"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:maxLength="50"/>
+		<TextView style="@style/form.label" android:text="@string/new_user_pass"/>
+		<EditText android:id="@+id/newUserPass"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:maxLength="50"
+			android:inputType="textPassword"/>
+	</LinearLayout>
+	
+	<LinearLayout style="@style/footer">
+		<Button android:id="@+id/validButton" style="@style/form.validButton" />
+	</LinearLayout>
+</LinearLayout>

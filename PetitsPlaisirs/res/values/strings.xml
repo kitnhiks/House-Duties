@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">House Duties</string>
+    
+    <string name="add_house">Ajouter une maison</string>
+    
+    <string name="home_intro">Bienvenue !</string>
+    <string name="home_title">Votre maison</string>
+    <string name="show_ladder">Voir les scores</string>
+    <string name="show_house_todo">Voir les tâches de la maison à faire</string>
+    <string name="show_user_done">Voir vos tâches à faire</string>
+    
+    <string name="enter_house_name">Le nom de votre maison...</string>
+    <string name="enter_house_pass">Le mot de passe...</string>
+    <string name="enter_user_name">votre nom...</string>
+    <string name="enter_user_pass">votre mot de passe...</string>
+    
+    <string name="new_house_title">Nouvelle Maison</string>
+    <string name="new_house_intro">Renseignez les infos de votre maison</string>
+    <string name="new_house_name">Nom de la maison : </string>
+    <string name="new_house_user_nbr">Nombre d\'habitants : </string>
+    <string name="house_already_exists">Cette maison existe déjà</string>
+    
+    <string name="new_user_title">Nouvel Habitant</string>
+    <string name="new_users_intro">Ajouter un habitant à la maison</string>
+    <string name="new_first_user_name">Votre nom : </string>
+    <string name="new_first_user_pass">Votre mot de passe : </string>
+    <string name="new_user_name">Nom de l\'habitant : </string>
+    <string name="new_user_pass">Mot de passe de l\'habitant : </string>
+    <string name="no_user">Pas d\'habitant</string>
+    <string name="add_user">Ajouter un habitant</string>
+    
+    <string name="no_task">Pas de tâche</string>
+    <string name="add_task">Ajouter une tâche...</string>
+    <string name="remove_task">Supprimer la tâche</string>
+    <string name="tasks_of">Les tâches de </string>
+    <string name="add_user_task">Vous assigner une nouvelle tâche de la maison...</string>
+    <string name="add_house_task">Ajouter une nouvelle tâche à la maison...</string>
+    <string name="added_task">Tâche ajoutée</string>
+    
+    <string name="list_tasks_txt">Choisissez une tâche...</string>
+    <string name="list_user_tasks_txt">Les tâches de</string>
+    <string name="list_house_tasks_txt">Les tâches de la maison</string>
+    <string name="list_users_txt">Les habitants de la maison</string>
+    
+    <string name="unknown_house">Maison inconnue</string>
+    <string name="unknown_user">Habitant inconnu</string>
+    <string name="bad_credentials">Oops... mauvais mot de passe</string>
+    <string name="session_error">Oops... fatal error...</string>
+    
+    <string name="form_valid_button">OK</string>
+    
+    <string name="alert_title">Attention</string>
+    <string name="alert_ok_button">OK</string>
+    <string name="alert_cancel_button">Annuler</string>
+    <string name="error_title">Error</string>
+    
+    <string name="missing_mandatories">Veuillez renseigner les champs obligatoires</string>
+    <string name="unknown_error">Oops...\nIl y a eu un petit problème...</string>
+
+</resources>

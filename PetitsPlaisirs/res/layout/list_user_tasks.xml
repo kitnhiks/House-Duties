@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" style="@style/home">
+	
+	<TableLayout style="@style/header">
+		<TextView android:id="@+id/listUserTasksTxt" style="@style/header.text" android:text="@string/list_user_tasks_txt" />
+	</TableLayout>
+	<LinearLayout style="@style/home.table">
+		<Button 
+			android:id="@+id/addTasks"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:background="@drawable/btn_add" android:layout_gravity="center"/>
+		<ListView 
+			android:id="@+id/listUserTasks"
+			android:layout_width="fill_parent" 
+			android:layout_height="wrap_content"  
+			android:layout_weight="1"/>
+	</LinearLayout>
+</LinearLayout>

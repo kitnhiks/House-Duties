@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+	<style name="splash">
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">fill_parent</item>
+		<item name="android:orientation">vertical</item>
+		<item name="android:background">@drawable/splash</item>
+	</style>
+	<style name="splash_land">
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">fill_parent</item>
+		<item name="android:orientation">vertical</item>
+		<item name="android:background">@drawable/splash_land</item>
+	</style>
+	<style name="home">
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:orientation">vertical</item>
+		<!-- item name="android:background">@drawable/background</item -->
+	</style>
+		<style name="home.text">
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:layout_gravity">right</item>
+		<item name="android:textSize">18dip</item>
+		<item name="android:textStyle">bold|italic</item>
+		<item name="android:textColor">@color/formTitleColor</item>
+	</style>
+	<style name="home.table">
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">fill_parent</item>
+		<item name="android:layout_gravity">center</item>
+	</style>
+	<style name="btn_list">
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">wrap_content</item>
+	</style>
+	<style name="header">
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:stretchColumns">1</item>
+		<item name="android:layout_gravity">center</item>
+		<item name="android:background">@color/formTitleBgColor2</item>
+		<item name="android:layout_marginBottom">50dip</item>
+	</style>
+	<style name="header.text">
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:textSize">24dip</item>
+		<item name="android:textStyle">bold|italic</item>
+		<item name="android:gravity">center</item>
+		<item name="android:background">@color/formTitleBgColor</item>
+		<item name="android:textColor">@color/formTitleColor</item>
+		<item name="android:layout_margin">5dip</item>
+	</style>
+
+	<style name="footer">
+		<item name="android:orientation">vertical</item>
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">fill_parent</item>
+		<item name="android:gravity">center</item>
+	</style>
+	<style name="form">
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">fill_parent</item>
+		<item name="android:orientation">vertical</item>
+		<item name="android:background">@color/bgColor</item>
+	</style>
+	<style name="form.intro">
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:textColor">@color/formIntroColor</item>
+		<item name="android:gravity">left</item>
+		<item name="android:layout_marginBottom">20dip</item>
+	</style>
+	<style name="form.listItem">
+		<item name="android:textSize">18dip</item>
+	</style>
+	<style name="form.listView">
+		<item name="android:divider">#f8c000</item>
+		<item name="android:dividerHeight">1px</item>
+	</style>
+	<style name="form.label">
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:textColor">@color/formLabelColor</item>
+		<item name="android:gravity">right</item>
+	</style>
+	<style name="form.fakeText">
+		<item name="android:textColor">@color/formFakeTextColor</item>
+		<item name="android:textStyle">italic</item>
+	</style>
+	<style name="form.table">
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:stretchColumns">1</item>
+		<item name="android:layout_gravity">center</item>
+	</style>
+	<style name="form.validButton">
+		<item name="android:layout_gravity">center</item>
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:drawableRight">@drawable/btn_ok</item>
+	</style>
+
+</resources>

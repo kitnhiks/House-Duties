@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" style="@style/form" android:layout_marginBottom="0dp">
+	<TableLayout style="@style/header">
+		<TextView  style="@style/header.text" android:text="@string/app_name"/>
+	</TableLayout>
+	
+	<LinearLayout style="@style/form.table">
+			<EditText android:id="@+id/houseName"
+				android:singleLine="true"
+				android:layout_height="wrap_content"
+				android:layout_width="fill_parent"
+				android:maxLength="50"
+				android:text="@string/enter_house_name"/>
+			<EditText android:id="@+id/userName"
+				android:singleLine="true"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:maxLength="50"
+				android:text="@string/enter_user_name"/>
+			<EditText android:id="@+id/userPass"
+				android:singleLine="true"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:maxLength="50"
+				android:text="@string/enter_user_pass"/>
+	</LinearLayout>
+
+    <LinearLayout style="@style/footer">
+		<Button android:id="@+id/validButton" style="@style/form.validButton" />
+	</LinearLayout>
+</LinearLayout>

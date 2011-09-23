@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" style="@style/home">
+	
+	<TableLayout style="@style/header">
+		<TextView style="@style/header.text" android:text="@string/home_title" />
+	</TableLayout>
+	<LinearLayout style="@style/home.table">
+		<!--  
+		<Button 
+			android:text="@string/show_ladder" 
+			android:id="@+id/showLadder"
+			android:drawableRight="@drawable/btn_ladder" 
+			android:layout_width="fill_parent" android:layout_height="wrap_content"/>
+		-->
+		<TableLayout android:layout_width="wrap_content" android:layout_height="fill_parent" android:layout_gravity="right">
+			<TableRow android:layout_height="wrap_content" android:layout_width="wrap_content" android:padding="10px">
+				<TextView 
+					style="@style/home.text" 
+					android:text="@string/show_ladder"/>
+				<ImageView 
+					android:src="@drawable/fleche" 
+					android:layout_width="wrap_content" 
+					android:layout_height="wrap_content" 
+					android:layout_gravity="right"/>
+			</TableRow>
+		</TableLayout>
+		<Button 
+			android:id="@+id/showLadder"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="right"
+	        android:background="@drawable/cup"/>
+		<Button 
+			android:text="@string/show_house_todo" 
+			android:id="@+id/showHouseTodo"
+			android:drawableRight="@drawable/btn_assign" 
+			android:layout_width="fill_parent" android:layout_height="wrap_content"/>
+		<Button 
+			android:text="@string/show_user_done" 
+			android:id="@+id/showUserDone"
+			android:drawableRight="@drawable/btn_done" 
+			android:layout_width="fill_parent" android:layout_height="wrap_content"/>
+	</LinearLayout>
+</LinearLayout>

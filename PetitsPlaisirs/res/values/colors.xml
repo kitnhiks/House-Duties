@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="bgColor">#337788</color>
+    <color name="textColor">#FFFFFF</color>
+    <color name="formTitleColor">#F7F1D4</color>
+    <color name="formTitleBgColor">#B33128</color>
+    <color name="formTitleBgColor2">#E7DAB2</color>
+    <color name="formLabelColor">#FFFFFF</color>
+    <color name="formFakeTextColor">#CCCCCC</color>
+    <color name="formIntroColor">#FFFFFF</color>
+</resources>
