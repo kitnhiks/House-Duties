@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteDatabase.CursorFactory;
 
 public class DBAccess extends SQLiteOpenHelper {
 	
-	public static final int VERSION_BDD = 3;
+	public static final int VERSION_BDD = 4;
 	public static final String NAME_BDD = "petitsplaisirs.db";
 	
 	public static final String categorie_TABLE = "pp_categorie";
@@ -40,6 +40,7 @@ public class DBAccess extends SQLiteOpenHelper {
 	public static final String tache_user_TABLE = "pp_tache_user";
 	public static final String tache_user_TABLE_COL_IDTACHE = "pp_tache_user_IDTACHE";
 	public static final String tache_user_TABLE_COL_IDUSER = "pp_tache_user_IDUSER";
+	public static final String tache_user_TABLE_COL_IDMAISON = "pp_tache_user_IDMAISON";
 	public static final String tache_user_TABLE_COL_IDRELATION = "pp_tache_user_IDRELATION";
 	public static final String tache_user_TABLE_COL_TODO = "pp_tache_user_TODO";
 	public static final String tache_user_TABLE_COL_PRIORITE = "pp_tache_user_PRIORITE";
@@ -48,10 +49,13 @@ public class DBAccess extends SQLiteOpenHelper {
 	
 	public static final String user_TABLE = "pp_user";
 	public static final String user_TABLE_COL_ID = "pp_user_ID";
-	public static final String user_TABLE_COL_IDHOUSE = "pp_user_IDHOUSE";
 	public static final String user_TABLE_COL_NOM = "pp_user_NOM";
 	public static final String user_TABLE_COL_MDP = "pp_user_MDP";
-	public static final String user_TABLE_COL_ADMIN = "pp_user_ADMIN";
+	
+	public static final String user_house_TABLE = "pp_user_house";
+	public static final String user_house_TABLE_COL_IDUSER = "pp_user_house_IDUSER";
+	public static final String user_house_TABLE_COL_IDHOUSE = "pp_user_house_IDHOUSE";
+	public static final String user_house_TABLE_COL_ISADMIN = "pp_user_house_ISADMIN";
 	
 	private static final String CREATE_TABLE_categorie = 
 		"CREATE TABLE "+categorie_TABLE+" ("+
@@ -97,6 +101,7 @@ public class DBAccess extends SQLiteOpenHelper {
 		"CREATE TABLE "+tache_user_TABLE+" ("+
 		tache_user_TABLE_COL_IDTACHE+" INTEGER,"+
 		tache_user_TABLE_COL_IDUSER+" INTEGER,"+
+		tache_user_TABLE_COL_IDMAISON+" INTEGER,"+
 		tache_user_TABLE_COL_IDRELATION+" TEXT,"+
 		tache_user_TABLE_COL_TODO+" INTEGER,"+
 		tache_user_TABLE_COL_PRIORITE+" INTEGER,"+
@@ -107,12 +112,16 @@ public class DBAccess extends SQLiteOpenHelper {
 	private static final String CREATE_TABLE_user = 
 		"CREATE TABLE "+user_TABLE+" ("+
 		user_TABLE_COL_ID+" INTEGER PRIMARY KEY AUTOINCREMENT,"+
-		user_TABLE_COL_IDHOUSE+" INTEGER,"+
 		user_TABLE_COL_NOM+" TEXT,"+
-		user_TABLE_COL_MDP+" TEXT,"+
-		user_TABLE_COL_ADMIN+" INTEGER"+
+		user_TABLE_COL_MDP+" TEXT"+
 		");";
 	
+	private static final String CREATE_TABLE_user_house = 
+		"CREATE TABLE "+user_house_TABLE+" ("+
+		user_house_TABLE_COL_IDUSER+" INTEGER PRIMARY KEY AUTOINCREMENT,"+
+		user_house_TABLE_COL_IDHOUSE+" INTEGER,"+
+		user_house_TABLE_COL_ISADMIN+" INTEGER"+
+		");";
 	
 	private SQLiteDatabase bdd;
 	
@@ -178,6 +187,7 @@ public class DBAccess extends SQLiteOpenHelper {
 		db.execSQL(CREATE_TABLE_tache_house);
 		db.execSQL(CREATE_TABLE_tache_user);
 		db.execSQL(CREATE_TABLE_user);
+		db.execSQL(CREATE_TABLE_user_house);
 		db.execSQL(CREATE_TABLE_house);
 	}
  
@@ -190,33 +200,7 @@ public class DBAccess extends SQLiteOpenHelper {
 		db.execSQL("DROP TABLE IF EXISTS "+tache_user_TABLE);
 		db.execSQL("DROP TABLE IF EXISTS "+house_TABLE);
 		db.execSQL("DROP TABLE IF EXISTS "+user_TABLE);
+		db.execSQL("DROP TABLE IF EXISTS "+user_house_TABLE);
 		onCreate(db);
-	}
-	
-	public static void cleanUp(SQLiteDatabase db){
-		// On vire les user sans maison
-		db.execSQL("DELETE FROM "+user_TABLE+
-					" WHERE "+ user_TABLE_COL_IDHOUSE +"NOT IN " +
-							"("+
-							"SELECT "+house_TABLE_COL_ID+ 
-							" FROM "+house_TABLE+
-							")"
-					);
-		// On vire les tâches sans maison
-		db.execSQL("DELETE FROM "+tache_house_TABLE+
-				" WHERE "+ tache_house_TABLE_COL_IDMAISON +"NOT IN " +
-						"("+
-						"SELECT "+house_TABLE_COL_ID+ 
-						" FROM "+house_TABLE+
-						")"
-				);
-		// On vire les tâches sans user
-		db.execSQL("DELETE FROM "+tache_user_TABLE+
-				" WHERE "+ tache_user_TABLE_COL_IDUSER +"NOT IN " +
-						"("+
-						"SELECT "+user_TABLE_COL_ID+ 
-						" FROM "+user_TABLE+
-						")"
-				);
 	}
 }

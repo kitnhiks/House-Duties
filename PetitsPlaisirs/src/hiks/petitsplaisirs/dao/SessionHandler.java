@@ -65,9 +65,9 @@ public class SessionHandler {
 	
 	/**
 	 * Vérifier l'existence d'un habitant d'une maison à partir de son nom
-	 * @param houseName l'id de la maison
+	 * @param houseId l'id de la maison
 	 * @param userName le nom de l'habitant
-	 * @param userMdp le mot de passe de l'habitant
+	 * @param userPass le mot de passe de l'habitant
 	 * @return l'id de l'habitant de la maison si tout s'est bien passé (-99 en cas de problème et -1 si l'user n'existe pas)
 	 */
 	public int checkUser(int houseId, String userName, String userPass){
@@ -93,18 +93,50 @@ public class SessionHandler {
 	}
 	
 	/**
-	 * Vérifie la connexion d'un user à une maison à partir du nom et du mot de passe 
-	 * @param houseName
+	 * Vérifier l'existence d'un habitant d'une maison à partir de son nom
+	 * @param userName le nom de l'habitant
+	 * @param userPass le mot de passe de l'habitant
+	 * @return l'id de l'habitant de la maison si tout s'est bien passé (-99 en cas de problème et -1 si l'user n'existe pas)
+	 */
+	public int checkUser(String userName, String userPass){
+		String METHOD_NAME = "checkUser";
+		try{
+			// Check mandatory
+			if ("".equals(userName) || "".equals(userPass)) {
+				throw new Exception (METHOD_NAME+" : Champs obligatoires manquants");
+			}
+			
+			open();
+			
+			// Check l'id du user
+			int userId = getUserId(userName, userPass);
+			
+			close();
+			
+			return userId;
+		}catch(Exception e){
+			System.out.println(this.getClass().getName()+ " - "+ METHOD_NAME+ " : Erreur : "+e.getMessage());
+			return -99;
+		}
+	}
+	
+	/**
+	 * Retourne l'id d'un user associé à une maison à partir du nom et du mot de passe 
+	 * @param houseId
 	 * @param userName
-	 * @param userMdp
+	 * @param userPass
 	 * @return l'id du user s'il existe, -1 sinon
 	 */
 	private int getUserId(int houseId, String userName, String userPass){
-		Cursor c = bdd.query(DBAccess.user_TABLE, 
+		Cursor c = bdd.query(DBAccess.user_TABLE+
+				" INNER JOIN "+
+				DBAccess.user_house_TABLE+
+				" ON ("+DBAccess.user_house_TABLE_COL_IDUSER+
+				" = "+DBAccess.user_TABLE_COL_ID+")", 
 				new String[] {
 					DBAccess.user_TABLE_COL_ID
 					},
-				DBAccess.user_TABLE_COL_IDHOUSE + " = " + houseId +" AND "+
+				DBAccess.user_house_TABLE_COL_IDHOUSE + " = " + houseId +" AND "+
 				DBAccess.user_TABLE_COL_NOM + " = \"" + userName +"\" AND "+
 				DBAccess.user_TABLE_COL_MDP + " = \"" + userPass +"\"", 
 				null, null, null, null);
@@ -122,6 +154,34 @@ public class SessionHandler {
 		return userId;
 	}
 
+	/**
+	 * Retourne l'id d'un user associé à une maison à partir du nom et du mot de passe 
+	 * @param userName
+	 * @param userPass
+	 * @return l'id du user s'il existe, -1 sinon
+	 */
+	private int getUserId(String userName, String userPass){
+		Cursor c = bdd.query(DBAccess.user_TABLE, 
+				new String[] {
+					DBAccess.user_TABLE_COL_ID
+					},
+				DBAccess.user_TABLE_COL_NOM + " = \"" + userName +"\" AND "+
+				DBAccess.user_TABLE_COL_MDP + " = \"" + userPass +"\"", 
+				null, null, null, null);
+
+		int userId = -99;
+		
+		if (c.getCount() == 0){
+			userId = -1;
+		}else{
+			c.moveToFirst();
+			userId = c.getInt(c.getColumnIndexOrThrow(DBAccess.user_TABLE_COL_ID));
+		}
+		c.close();
+ 
+		return userId;
+	}
+	
 	/**
 	 * Retourne l'id d'une maison à partir du nom
 	 * @param houseName

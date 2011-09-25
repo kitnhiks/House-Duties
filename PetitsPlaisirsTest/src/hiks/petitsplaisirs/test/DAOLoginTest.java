@@ -40,13 +40,22 @@ public class DAOLoginTest extends AndroidTestCase {
 		int nbTasksHouse;
 		int nbTasksUser;
 		
+/*		// Remove test House => The House is removed
+		res = tUser.removeUser(user1Name);
+		assertTrue("Erreur la supression du user 1 : "+res, res >= 0 || res == -1);
+		res = tUser.removeUser(user2Name);
+		assertTrue("Erreur la supression du user 2 : "+res, res >= 0 || res == -1);
+	*/	
 		// Remove test House => The House is removed
 		res = tHouse.removeHouse(houseName, houseMdp);
-		assertTrue("Erreur la supression d'une maison : "+res, res >= 0 || res == -1);
+		assertTrue("Erreur la supression d'une maison : "+res, res > 0 || res == -1);
+		
+		
+		// Create a new User
 		
 		// Create a new test House with a User => The House is created
 		res = tHouse.addHouse(houseName, houseMdp, user1Name, user1Mdp);
-		assertTrue("Erreur la création d'une nouvelle maison : "+res, res >= 0);
+		assertTrue("Erreur à la création d'une nouvelle maison : "+res, res >= 0);
 		houseId = res;
 		
 		// Check connection => The connection is OK
@@ -58,7 +67,8 @@ public class DAOLoginTest extends AndroidTestCase {
 		
 		// Add another User to the House => The User is created
 		res = tHouse.addUser(user2Name, user2Mdp, houseId);
-		assertTrue("Erreur à l'insertion de user2Name", res == 0);
+		assertTrue("Erreur à la création d'un nouvel user", res != -99);
+		assertTrue("Utilisateur déjà existant", res != -1);
 		
 		// Show Ladder => User1 > User2 (alphabetical)
 		houseUsers = tUser.getUsers(houseId);
@@ -207,6 +217,7 @@ public class DAOLoginTest extends AndroidTestCase {
 		assertTrue("Problème dans l'ordre du Ladder : Le deuxième est "+houseUsers[1].getNom()+" avec "+houseUsers[1].getPoints()+" points", houseUsers[1].getNom().equals(user1Name));
 
 		// Second User disconnection => The User is disconnected
+		
 	}
 	
 	// TODO 

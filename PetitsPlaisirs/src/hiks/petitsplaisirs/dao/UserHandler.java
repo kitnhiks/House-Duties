@@ -32,21 +32,33 @@ public class UserHandler {
 	public User[] getUsers(int houseId){
 		maBase.open();
 		
-		String strQuery = "(" +
-		DBAccess.user_TABLE+
-		" LEFT JOIN "+
-		DBAccess.tache_user_TABLE+
-		" ON ("+
-			DBAccess.tache_user_TABLE_COL_IDUSER+
-			" = "+DBAccess.user_TABLE_COL_ID+
-			" AND "+
-			DBAccess.tache_user_TABLE_COL_FAITLE + " is not null"+
-			")" +
+		String strQuery = 
+		"(" +
+			"(" +
+				DBAccess.user_TABLE+
+				" INNER JOIN "+
+					DBAccess.user_house_TABLE+
+					" ON ("+
+						DBAccess.user_house_TABLE_COL_IDUSER+
+						" = "+DBAccess.user_TABLE_COL_ID+
+					")"+
+			")"+
+			" LEFT JOIN "+
+				DBAccess.tache_user_TABLE+
+				" ON ("+
+					DBAccess.tache_user_TABLE_COL_IDUSER+
+					" = "+DBAccess.user_TABLE_COL_ID+
+					" AND "+
+					DBAccess.tache_user_TABLE_COL_FAITLE + " is not null"+
+					")" +
 		")" +
 		" LEFT JOIN "+
-		DBAccess.tache_TABLE+
-		" ON ("+DBAccess.tache_user_TABLE_COL_IDTACHE+
-		" = "+DBAccess.tache_TABLE_COL_ID+")";
+			DBAccess.tache_TABLE+
+			" ON ("+
+				DBAccess.tache_user_TABLE_COL_IDTACHE+
+				" = "+DBAccess.tache_TABLE_COL_ID+
+			")";
+		
 		Cursor c = maBase.getBDD().query(
 				strQuery
 				, 
@@ -55,7 +67,7 @@ public class UserHandler {
 					DBAccess.user_TABLE_COL_NOM,
 					"SUM ("+DBAccess.tache_TABLE_COL_POINT+") as points"
 					}, 
-				DBAccess.user_TABLE_COL_IDHOUSE + " = \"" + houseId +"\"", 
+				DBAccess.user_house_TABLE_COL_IDHOUSE + " = \"" + houseId +"\"", 
 				null, DBAccess.user_TABLE_COL_ID, null, "points DESC, "+DBAccess.user_TABLE_COL_NOM);
 
 		
