@@ -9,15 +9,22 @@ import android.test.AndroidTestCase;
 public class DAOLoginTest extends AndroidTestCase {
 
 	private SessionHandler tLogin;
-	private HouseHandler tHouse;
+	private HouseHandlerSQL tHouse;
 	private UserHandler tUser;
 	private TaskHandler tTask;
 	private String houseName = "utHouse";
 	private String houseMdp = "utHouseMdp";
+	private String house2Name = "utHouse2";
+	private String house2Mdp = "utHouse2Mdp";
 	private String user1Name = "utUser1";
-	private String user1Mdp = "ututUser1Mdp";
+	private String user1Mdp = "utUser1Mdp";
+	private String user1Email = "utUser1@Email.com";
 	private String user2Name = "utUser2";
-	private String user2Mdp = "ututUser2Mdp";
+	private String user2Mdp = "utUser2Mdp";
+	private String user2Email = "utUser2@Email.com";
+	private String user3Name = "utUser3";
+	private String user3Mdp = "utUser3Mdp";
+	private String user3Email = "utUser3@Email.com";
 	
 	@Override
     protected void setUp() throws Exception {
@@ -46,18 +53,20 @@ public class DAOLoginTest extends AndroidTestCase {
 		res = tUser.removeUser(user2Name);
 		assertTrue("Erreur la supression du user 2 : "+res, res >= 0 || res == -1);
 	*/	
-		// Remove test House => The House is removed
+		// Remove test Houses => The House is removed
 		res = tHouse.removeHouse(houseName, houseMdp);
-		assertTrue("Erreur la supression d'une maison : "+res, res > 0 || res == -1);
+		assertTrue("Erreur la supression de la maison "+houseName+": "+res, res > 0 || res == ErrorHandler.NOT_EXISTS );
+		res = tHouse.removeHouse(house2Name, house2Mdp);
+		assertTrue("Erreur la supression d'une maison "+house2Name+": "+res, res > 0 || res == ErrorHandler.NOT_EXISTS );
 		
 		
 		// Create a new User
 		
 		// Create a new test House with a User => The House is created
-		res = tHouse.addHouse(houseName, houseMdp, user1Name, user1Mdp);
+		res = tHouse.addHouse(houseName, houseMdp, user1Email, user1Name, user1Mdp);
 		assertTrue("Erreur à la création d'une nouvelle maison : "+res, res >= 0);
 		houseId = res;
-		
+				
 		// Check connection => The connection is OK
 		res = tLogin.checkUser(houseId, user1Name, user1Mdp);
 		assertTrue("Erreur à la tentative de login", res != -99);
@@ -66,7 +75,7 @@ public class DAOLoginTest extends AndroidTestCase {
 		userId = res;
 		
 		// Add another User to the House => The User is created
-		res = tHouse.addUser(user2Name, user2Mdp, houseId);
+		res = tHouse.addUser(user2Name, user2Mdp, user2Email, houseId);
 		assertTrue("Erreur à la création d'un nouvel user", res != -99);
 		assertTrue("Utilisateur déjà existant", res != -1);
 		
@@ -218,6 +227,22 @@ public class DAOLoginTest extends AndroidTestCase {
 
 		// Second User disconnection => The User is disconnected
 		
+		// Create a second house by user3
+		res = tHouse.addHouse(house2Name, house2Mdp, user3Email, user3Name, user3Mdp);
+		assertTrue("Erreur à la création d'une nouvelle maison : "+res, res >= 0);
+		houseId = res;
+		
+		// Link the second house to the user1
+		res = tHouse.addUser(user1Name, user1Mdp, user1Email, houseId);
+		assertTrue("Erreur à la création d'un nouvel user", res != -99);
+		assertTrue("Utilisateur déjà existant", res != -1);
+		
+		// List all houses of the user 1
+		{
+			House[] user1Houses = tUser.getUserHouses(res);
+			int nbHouses = user1Houses.length;
+			assertTrue("Mauvaise récupération des maisons d'un user", nbHouses == 2);
+		}
 	}
 	
 	// TODO 

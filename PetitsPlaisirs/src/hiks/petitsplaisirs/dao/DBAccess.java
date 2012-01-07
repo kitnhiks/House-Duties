@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteDatabase.CursorFactory;
 
 public class DBAccess extends SQLiteOpenHelper {
 	
-	public static final int VERSION_BDD = 4;
+	public static final int VERSION_BDD = 6;
 	public static final String NAME_BDD = "petitsplaisirs.db";
 	
 	public static final String categorie_TABLE = "pp_categorie";
@@ -51,8 +51,10 @@ public class DBAccess extends SQLiteOpenHelper {
 	public static final String user_TABLE_COL_ID = "pp_user_ID";
 	public static final String user_TABLE_COL_NOM = "pp_user_NOM";
 	public static final String user_TABLE_COL_MDP = "pp_user_MDP";
+	public static final String user_TABLE_COL_EMAIL = "pp_user_EMAIL";
 	
 	public static final String user_house_TABLE = "pp_user_house";
+	public static final String user_house_TABLE_COL_ID = "pp_user_house_ID";
 	public static final String user_house_TABLE_COL_IDUSER = "pp_user_house_IDUSER";
 	public static final String user_house_TABLE_COL_IDHOUSE = "pp_user_house_IDHOUSE";
 	public static final String user_house_TABLE_COL_ISADMIN = "pp_user_house_ISADMIN";
@@ -113,12 +115,14 @@ public class DBAccess extends SQLiteOpenHelper {
 		"CREATE TABLE "+user_TABLE+" ("+
 		user_TABLE_COL_ID+" INTEGER PRIMARY KEY AUTOINCREMENT,"+
 		user_TABLE_COL_NOM+" TEXT,"+
-		user_TABLE_COL_MDP+" TEXT"+
+		user_TABLE_COL_MDP+" TEXT,"+
+		user_TABLE_COL_EMAIL+" TEXT"+
 		");";
 	
 	private static final String CREATE_TABLE_user_house = 
 		"CREATE TABLE "+user_house_TABLE+" ("+
-		user_house_TABLE_COL_IDUSER+" INTEGER PRIMARY KEY AUTOINCREMENT,"+
+		user_house_TABLE_COL_ID+" INTEGER PRIMARY KEY AUTOINCREMENT,"+
+		user_house_TABLE_COL_IDUSER+" INTEGER,"+
 		user_house_TABLE_COL_IDHOUSE+" INTEGER,"+
 		user_house_TABLE_COL_ISADMIN+" INTEGER"+
 		");";

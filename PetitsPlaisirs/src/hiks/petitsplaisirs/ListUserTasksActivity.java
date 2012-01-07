@@ -29,6 +29,7 @@ import android.widget.AdapterView.OnItemClickListener;
  */
 public class ListUserTasksActivity extends ListScreen{
 
+	private int houseId;
 	private String[] tasksNames;
 	private Task[] listeTasks;
 	private TaskHandler th;
@@ -50,17 +51,19 @@ public class ListUserTasksActivity extends ListScreen{
 				Intent newIntent = new Intent(view.getContext(), ListHouseTasksActivity.class);
 				newIntent.putExtra("hiks.petitsplaisirs.userId", userId);
 				newIntent.putExtra("hiks.petitsplaisirs.houseId", houseId);
-				newIntent.putExtra("hiks.petitsplaisirs.userName", userName);
+				newIntent.putExtra("hiks.petitsplaisirs.userEmail", userEmail);
 				newIntent.putExtra("hiks.petitsplaisirs.userPass", userPass);
 				startActivityForResult(newIntent, 1);
 			}
 		});
 
 		TextView txt = (TextView)findViewById(R.id.listUserTasksTxt);
-		txt.setText(txt.getText()+" "+userName);
+		txt.setText(txt.getText()+" "+userEmail);
 	}
 
 	protected void generateList(){
+		houseId = getIntent().getExtras().getInt("hiks.petitsplaisirs.houseId");
+		
 		th = new TaskHandler(this);
 		listeTasks = th.getUserTodoTasks(userId);
 		int nbTasks = listeTasks.length;
@@ -123,7 +126,7 @@ public class ListUserTasksActivity extends ListScreen{
 			Intent newIntent = new Intent(this, ListHouseTasksActivity.class);
 			newIntent.putExtra("hiks.petitsplaisirs.userId", userId);
 			newIntent.putExtra("hiks.petitsplaisirs.houseId", houseId);
-			newIntent.putExtra("hiks.petitsplaisirs.userName", userName);
+			newIntent.putExtra("hiks.petitsplaisirs.userEmail", userEmail);
 			newIntent.putExtra("hiks.petitsplaisirs.userPass", userPass);
 			startActivityForResult(newIntent, 1);
 			// TODO : on arrive là ???

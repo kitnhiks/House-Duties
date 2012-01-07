@@ -12,14 +12,23 @@
     
     <string name="enter_house_name">Le nom de votre maison...</string>
     <string name="enter_house_pass">Le mot de passe...</string>
+    <string name="enter_user_email">votre E-mail...</string>
     <string name="enter_user_name">votre nom...</string>
     <string name="enter_user_pass">votre mot de passe...</string>
     
     <string name="new_house_title">Nouvelle Maison</string>
     <string name="new_house_intro">Renseignez les infos de votre maison</string>
     <string name="new_house_name">Nom de la maison : </string>
+    <string name="new_house_pass">Mot de passe de la maison : </string>
     <string name="new_house_user_nbr">Nombre d\'habitants : </string>
     <string name="house_already_exists">Cette maison existe déjà</string>
+    <string name="no_house">Pas de maison</string>
+    
+    <string name="link_user_house_title">Nouvelle Maison</string>
+    <string name="link_user_house_intro">Renseignez les infos de votre maison</string>
+    <string name="house_name">Nom de la maison : </string>
+    <string name="house_pass">Mot de passe de la maison : </string>
+    <string name="join_house">Rejoindre une maison</string>
     
     <string name="new_user_title">Nouvel Habitant</string>
     <string name="new_users_intro">Ajouter un habitant à la maison</string>
@@ -27,8 +36,12 @@
     <string name="new_first_user_pass">Votre mot de passe : </string>
     <string name="new_user_name">Nom de l\'habitant : </string>
     <string name="new_user_pass">Mot de passe de l\'habitant : </string>
+    <string name="new_user_email">adresse e-mail de l\'habitant : </string>
+    <string name="user_already_exists">Cet habitant existe déjà</string>
+    <string name="email_already_exists">Cet e-mail est déjà utilisé</string>
     <string name="no_user">Pas d\'habitant</string>
     <string name="add_user">Ajouter un habitant</string>
+    <string name="added_user">Le nouvel habitant a bien été ajouté, un e-mail lui a été envoyé pour l\'inviter à venir utiliser l\'application.</string>
     
     <string name="no_task">Pas de tâche</string>
     <string name="add_task">Ajouter une tâche...</string>
@@ -42,6 +55,7 @@
     <string name="list_user_tasks_txt">Les tâches de</string>
     <string name="list_house_tasks_txt">Les tâches de la maison</string>
     <string name="list_users_txt">Les habitants de la maison</string>
+    <string name="list_houses_txt">Vos maisons</string>
     
     <string name="unknown_house">Maison inconnue</string>
     <string name="unknown_user">Habitant inconnu</string>
@@ -53,9 +67,18 @@
     <string name="alert_title">Attention</string>
     <string name="alert_ok_button">OK</string>
     <string name="alert_cancel_button">Annuler</string>
+    
+    <string name="info_title">Information</string>
+    
     <string name="error_title">Error</string>
     
     <string name="missing_mandatories">Veuillez renseigner les champs obligatoires</string>
     <string name="unknown_error">Oops...\nIl y a eu un petit problème...</string>
+
+	
+	<string name="help_title">Aide</string>
+    <string name="help_close_button">Fermer</string>
+    <string name="help_stop_button">Ne plus afficher l\'aide</string>
+    <string name="help_login">Bienvenue dans House Duties\nGrâce à cette application, votre maison va bientôt sentir bon comme celles des housewifes américaines des fifties en moins desespérés et le tout dans la bonne humeur et sans faire appel à la magie de Mary Poppins !\n En cliquant sur la touche Menu de votre téléphone vous pouvez vous inscrire avec une nouvelle maison ou rejoindre une maison existante\n si vous avez déjà un compte, vous pouvez vous connecter directement."</string>
 
 </resources>

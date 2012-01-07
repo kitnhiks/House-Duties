@@ -39,27 +39,27 @@ public class SessionHandler {
 	/**
 	 * Vérifie l'existence d'une maison à partir de son nom
 	 * @param houseName le nom de la maison
-	 * @return l'id de la maison si tout s'est bien passé (-99 en cas de problème et -1 si la maison n'existe pas)
+	 * @return l'id de la maison si tout s'est bien passé (ErrorHandler.UNKNOWN en cas de problème et ErrorHandler.NOT_EXISTS si la maison n'existe pas)
 	 */
-	public int checkHouse(String houseName){
+	public int checkHouse(String houseName, String housePass){
 		String METHOD_NAME = "checkHouse";
 		try{
 			// Check mandatory
-			if ("".equals(houseName)) {
+			if ("".equals(houseName) || "".equals(housePass)) {
 				throw new Exception (METHOD_NAME+" : Champs obligatoires manquants");
 			}
 			
 			open();
 			
 			// Check l'id de la maison
-			int houseId = getHouseId(houseName);
+			int houseId = getHouseId(houseName, housePass);
 			
 			close();
 			
 			return houseId;
 		}catch(Exception e){
 			System.out.println(this.getClass().getName()+ " - "+ METHOD_NAME+ " : Erreur : "+e.getMessage());
-			return -99;
+			return ErrorHandler.UNKNOWN;
 		}
 	}
 	
@@ -68,7 +68,7 @@ public class SessionHandler {
 	 * @param houseId l'id de la maison
 	 * @param userName le nom de l'habitant
 	 * @param userPass le mot de passe de l'habitant
-	 * @return l'id de l'habitant de la maison si tout s'est bien passé (-99 en cas de problème et -1 si l'user n'existe pas)
+	 * @return l'id de l'habitant de la maison si tout s'est bien passé (ErrorHandler.UNKNOWN en cas de problème et ErrorHandler.NOT_EXISTS si l'user n'existe pas)
 	 */
 	public int checkUser(int houseId, String userName, String userPass){
 		String METHOD_NAME = "checkUser";
@@ -88,35 +88,35 @@ public class SessionHandler {
 			return userId;
 		}catch(Exception e){
 			System.out.println(this.getClass().getName()+ " - "+ METHOD_NAME+ " : Erreur : "+e.getMessage());
-			return -99;
+			return ErrorHandler.UNKNOWN;
 		}
 	}
 	
 	/**
-	 * Vérifier l'existence d'un habitant d'une maison à partir de son nom
-	 * @param userName le nom de l'habitant
+	 * Vérifier l'existence d'un habitant à partir de son mail
+	 * @param userEmail le mail de l'habitant
 	 * @param userPass le mot de passe de l'habitant
-	 * @return l'id de l'habitant de la maison si tout s'est bien passé (-99 en cas de problème et -1 si l'user n'existe pas)
+	 * @return l'id de l'habitant de la maison si tout s'est bien passé (ErrorHandler.UNKNOWN en cas de problème et ErrorHandler.NOT_EXISTS si l'user n'existe pas)
 	 */
-	public int checkUser(String userName, String userPass){
+	public int checkUser(String userEmail, String userPass){
 		String METHOD_NAME = "checkUser";
 		try{
 			// Check mandatory
-			if ("".equals(userName) || "".equals(userPass)) {
+			if ("".equals(userEmail) || "".equals(userPass)) {
 				throw new Exception (METHOD_NAME+" : Champs obligatoires manquants");
 			}
 			
 			open();
 			
 			// Check l'id du user
-			int userId = getUserId(userName, userPass);
+			int userId = getUserId(userEmail, userPass);
 			
 			close();
 			
 			return userId;
 		}catch(Exception e){
 			System.out.println(this.getClass().getName()+ " - "+ METHOD_NAME+ " : Erreur : "+e.getMessage());
-			return -99;
+			return ErrorHandler.UNKNOWN;
 		}
 	}
 	
@@ -125,7 +125,7 @@ public class SessionHandler {
 	 * @param houseId
 	 * @param userName
 	 * @param userPass
-	 * @return l'id du user s'il existe, -1 sinon
+	 * @return l'id du user s'il existe, ErrorHandler.NOT_EXISTS sinon
 	 */
 	private int getUserId(int houseId, String userName, String userPass){
 		Cursor c = bdd.query(DBAccess.user_TABLE+
@@ -137,14 +137,14 @@ public class SessionHandler {
 					DBAccess.user_TABLE_COL_ID
 					},
 				DBAccess.user_house_TABLE_COL_IDHOUSE + " = " + houseId +" AND "+
-				DBAccess.user_TABLE_COL_NOM + " = \"" + userName +"\" AND "+
+				"LOWER("+DBAccess.user_TABLE_COL_NOM + ") = \"" + userName.toLowerCase() +"\" AND "+
 				DBAccess.user_TABLE_COL_MDP + " = \"" + userPass +"\"", 
 				null, null, null, null);
 
-		int userId = -99;
+		int userId = ErrorHandler.UNKNOWN;
 		
 		if (c.getCount() == 0){
-			userId = -1;
+			userId = ErrorHandler.NOT_EXISTS;
 		}else{
 			c.moveToFirst();
 			userId = c.getInt(c.getColumnIndexOrThrow(DBAccess.user_TABLE_COL_ID));
@@ -156,23 +156,23 @@ public class SessionHandler {
 
 	/**
 	 * Retourne l'id d'un user associé à une maison à partir du nom et du mot de passe 
-	 * @param userName
+	 * @param userEmail
 	 * @param userPass
-	 * @return l'id du user s'il existe, -1 sinon
+	 * @return l'id du user s'il existe, ErrorHandler.NOT_EXISTS sinon
 	 */
-	private int getUserId(String userName, String userPass){
+	private int getUserId(String userEmail, String userPass){
 		Cursor c = bdd.query(DBAccess.user_TABLE, 
 				new String[] {
 					DBAccess.user_TABLE_COL_ID
 					},
-				DBAccess.user_TABLE_COL_NOM + " = \"" + userName +"\" AND "+
+				DBAccess.user_TABLE_COL_EMAIL + " = \"" + userEmail +"\" AND "+
 				DBAccess.user_TABLE_COL_MDP + " = \"" + userPass +"\"", 
 				null, null, null, null);
 
-		int userId = -99;
+		int userId = ErrorHandler.UNKNOWN;
 		
 		if (c.getCount() == 0){
-			userId = -1;
+			userId = ErrorHandler.NOT_EXISTS;
 		}else{
 			c.moveToFirst();
 			userId = c.getInt(c.getColumnIndexOrThrow(DBAccess.user_TABLE_COL_ID));
@@ -185,20 +185,22 @@ public class SessionHandler {
 	/**
 	 * Retourne l'id d'une maison à partir du nom
 	 * @param houseName
-	 * @return l'id de la maison si elle existe, -1 sinon et -99 si il y'a plusieurs résultats
+	 * @param housePass
+	 * @return l'id de la maison si elle existe, ErrorHandler.NOT_EXISTS sinon et ErrorHandler.UNKNOWN si il y'a plusieurs résultats
 	 */
-	private int getHouseId(String houseName){
+	private int getHouseId(String houseName, String housePass){
 		Cursor c = bdd.query(DBAccess.house_TABLE, 
 				new String[] {DBAccess.house_TABLE_COL_ID, DBAccess.house_TABLE_COL_NOM}, 
-				DBAccess.house_TABLE_COL_NOM + " = \"" + houseName +"\"", 
+				"LOWER("+DBAccess.house_TABLE_COL_NOM + ") = \"" + houseName.toLowerCase() +"\" AND "+
+				DBAccess.house_TABLE_COL_MDP + " = \"" + housePass +"\"", 
 				null, null, null, null);
 
-		int houseId = -99;
+		int houseId = ErrorHandler.UNKNOWN;
 		
 		if (c.getCount() == 0){
-			houseId = -1;
+			houseId = ErrorHandler.NOT_EXISTS;
 		}else if (c.getCount() > 1){
-			houseId = -99;
+			houseId = ErrorHandler.UNKNOWN;
 		}else{
 			c.moveToFirst();
 			houseId = c.getInt(c.getColumnIndexOrThrow(DBAccess.house_TABLE_COL_ID));

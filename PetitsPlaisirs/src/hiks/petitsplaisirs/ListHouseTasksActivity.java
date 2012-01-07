@@ -26,6 +26,7 @@ import android.widget.AdapterView.OnItemClickListener;
  */
 public class ListHouseTasksActivity extends ListScreen{
 
+	private int houseId;
 	private String[] tasksNames;
 	private Task[] listeTasks;
 	private TaskHandler th;
@@ -34,6 +35,7 @@ public class ListHouseTasksActivity extends ListScreen{
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
 	}
 
 	protected void generateLayout(){
@@ -47,7 +49,7 @@ public class ListHouseTasksActivity extends ListScreen{
 				Intent newIntent = new Intent(view.getContext(), NewHouseTasksActivity.class);
 				newIntent.putExtra("hiks.petitsplaisirs.userId", userId);
 				newIntent.putExtra("hiks.petitsplaisirs.houseId", houseId);
-				newIntent.putExtra("hiks.petitsplaisirs.userName", userName);
+				newIntent.putExtra("hiks.petitsplaisirs.userEmail", userEmail);
 				newIntent.putExtra("hiks.petitsplaisirs.userPass", userPass);
 				startActivityForResult(newIntent, 1);
 			}
@@ -55,6 +57,9 @@ public class ListHouseTasksActivity extends ListScreen{
 	}
 
 	protected void generateList(){
+		
+		houseId = getIntent().getExtras().getInt("hiks.petitsplaisirs.houseId");
+		
 		th = new TaskHandler(this);
 		listeTasks = th.getHouseTodoTasks(houseId);
 		// TODO : Ajouter les tâches en cours dans un autre onglet
@@ -120,7 +125,7 @@ public class ListHouseTasksActivity extends ListScreen{
 			Intent newIntent = new Intent(this, NewHouseTasksActivity.class);
 			newIntent.putExtra("hiks.petitsplaisirs.userId", userId);
 			newIntent.putExtra("hiks.petitsplaisirs.houseId", houseId);
-			newIntent.putExtra("hiks.petitsplaisirs.userName", userName);
+			newIntent.putExtra("hiks.petitsplaisirs.userEmail", userEmail);
 			newIntent.putExtra("hiks.petitsplaisirs.userPass", userPass);
 			startActivityForResult(newIntent, 1);
 			// TODO : on arrive là ???

@@ -18,6 +18,7 @@ import android.widget.ListView;
  */
 public class ListUsersActivity extends ListScreen{
 
+	private int houseId;
 	private String[] usersNames;
 	private User[] listeUsers;
 	private UserHandler uh; 
@@ -35,6 +36,8 @@ public class ListUsersActivity extends ListScreen{
 
 	protected void generateList(){
 
+		houseId = getIntent().getExtras().getInt("hiks.petitsplaisirs.houseId");
+		
 		uh = new UserHandler(this);
 		listeUsers = uh.getUsers(houseId);
 		int nbUsers = listeUsers.length;
@@ -57,7 +60,7 @@ public class ListUsersActivity extends ListScreen{
 					Intent newIntent = new Intent();
 					newIntent.putExtra("hiks.petitsplaisirs.houseId", houseId);
 					newIntent.putExtra("hiks.petitsplaisirs.userId", userId);
-					newIntent.putExtra("hiks.petitsplaisirs.userName", userName);
+					newIntent.putExtra("hiks.petitsplaisirs.userEmail", userEmail);
 					newIntent.putExtra("hiks.petitsplaisirs.userPass", userPass);
 					// go to ListUserTasks
 					if (listeUsers[position].getId() == userId){

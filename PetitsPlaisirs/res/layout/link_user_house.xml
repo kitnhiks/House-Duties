@@ -2,19 +2,19 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" style="@style/form">
 	
 <!-- 	<TableLayout style="@style/header"> -->
-<!-- 		<TextView style="@style/header.text" android:text="@string/new_house_title" /> -->
+<!-- 		<TextView style="@style/header.text" android:text="@string/link_user_house_title" /> -->
 <!-- 	</TableLayout>	 -->
 	
-<!-- 	<TextView style="@style/form.intro" android:text="@string/new_house_intro"/> -->
+<!-- 	<TextView style="@style/form.intro" android:text="@string/link_user_house_intro"/> -->
 	<LinearLayout style="@style/form.table">
-		<TextView style="@style/form.label" android:text="@string/new_house_name" android:layout_width="fill_parent"/>
-		<EditText android:id="@+id/newHouseName"
+		<TextView style="@style/form.label" android:text="@string/house_name" android:layout_width="fill_parent"/>
+		<EditText android:id="@+id/houseName"
 			android:singleLine="true"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:maxLength="50"/>
-		<TextView style="@style/form.label" android:text="@string/new_house_pass"/>
-		<EditText android:id="@+id/newHousePass"
+		<TextView style="@style/form.label" android:text="@string/house_pass"/>
+		<EditText android:id="@+id/housePass"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:maxLength="50"

@@ -2,4 +2,7 @@
     <item android:id="@+id/addHouse"
           android:icon="@android:drawable/ic_menu_add"
           android:title="@string/add_house" />
+    <item android:id="@+id/joinHouse"
+          android:icon="@android:drawable/ic_menu_add"
+          android:title="@string/join_house" />
 </menu>

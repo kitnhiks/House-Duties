@@ -14,8 +14,8 @@ public class HomeActivity extends Activity implements OnClickListener {
 
 	private int houseId;
 	private int userId;
-	private String userName;
-	private String userPass;
+	protected String userEmail;
+	protected String userPass;
 	
 	/** Called when the activity is first created. */
     @Override
@@ -24,12 +24,12 @@ public class HomeActivity extends Activity implements OnClickListener {
         
         Bundle extras = getIntent().getExtras();
         houseId = extras.getInt("hiks.petitsplaisirs.houseId");
-        userName = extras.getString("hiks.petitsplaisirs.userName");
+        userEmail = extras.getString("hiks.petitsplaisirs.userEmail");
         userPass = extras.getString("hiks.petitsplaisirs.userPass");
         
         SessionHandler sh = new SessionHandler(this);
         // TODO : check userID ??? over securitas
-        userId = sh.checkUser(houseId, userName, userPass);
+        userId = sh.checkUser(userEmail, userPass);
 
         if (userId < 0){
         	setContentView(R.layout.error);
@@ -49,7 +49,7 @@ public class HomeActivity extends Activity implements OnClickListener {
     	Intent newIntent = new Intent();
     	newIntent.putExtra("hiks.petitsplaisirs.houseId", houseId);
 		newIntent.putExtra("hiks.petitsplaisirs.userId", userId);
-		newIntent.putExtra("hiks.petitsplaisirs.userName", userName);
+		newIntent.putExtra("hiks.petitsplaisirs.userEmail", userEmail);
 		newIntent.putExtra("hiks.petitsplaisirs.userPass", userPass);
     	
     	switch (view.getId()) {
@@ -88,7 +88,7 @@ public class HomeActivity extends Activity implements OnClickListener {
 			Intent newIntent = new Intent(this, NewUsersActivity.class);
 			newIntent.putExtra("hiks.petitsplaisirs.userId", userId);
 			newIntent.putExtra("hiks.petitsplaisirs.houseId", houseId);
-			newIntent.putExtra("hiks.petitsplaisirs.userName", userName);
+			newIntent.putExtra("hiks.petitsplaisirs.userEmail", userEmail);
 			newIntent.putExtra("hiks.petitsplaisirs.userPass", userPass);
 			startActivityForResult(newIntent, 1);
 			// TODO : on arrive là ???

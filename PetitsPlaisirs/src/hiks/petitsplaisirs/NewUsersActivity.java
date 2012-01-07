@@ -1,5 +1,6 @@
 package hiks.petitsplaisirs;
 
+import hiks.petitsplaisirs.dao.ErrorHandler;
 import hiks.petitsplaisirs.dao.HouseHandler;
 import hiks.petitsplaisirs.dao.HouseHandlerSQL;
 import hiks.petitsplaisirs.dao.SessionHandler;
@@ -9,6 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class NewUsersActivity extends Activity implements OnClickListener{
 	private int houseId;
@@ -50,14 +52,21 @@ public class NewUsersActivity extends Activity implements OnClickListener{
 		case R.id.validButton:
 			String newUserName = ((EditText) findViewById(R.id.newUserName)).getText().toString();
 			String newUserPass = ((EditText) findViewById(R.id.newUserPass)).getText().toString();
-			int res = createUser(newUserName, newUserPass);
-			if (res == -1) { // Cas des champs obligatoires manquant
+			String newUserEmail = ((EditText) findViewById(R.id.newUserEmail)).getText().toString();
+			int res = createUser(newUserName, newUserPass, newUserEmail);
+			if (res == ErrorHandler.MANDATORY_FIELDS) { // Champs obligatoires
 				new AlertDialog.Builder(this)
 				.setTitle(R.string.alert_title)
 				.setMessage(R.string.missing_mandatories)
 				.setPositiveButton(R.string.alert_ok_button, null)
 				.show();
-			} else if (res == -99) { // Cas d'erreur
+			}else if (res == ErrorHandler.USER_ALREADY_EXISTS) { // Cas d'un habitant déjà existant
+				new AlertDialog.Builder(this)
+				.setTitle(R.string.alert_title)
+				.setMessage(R.string.user_already_exists)
+				.setPositiveButton(R.string.alert_ok_button, null)
+				.show();
+			}else if (res == ErrorHandler.UNKNOWN) { // Cas d'erreur
 				new AlertDialog.Builder(this)
 				.setTitle(R.string.alert_title)
 				.setMessage(R.string.unknown_error)
@@ -65,6 +74,12 @@ public class NewUsersActivity extends Activity implements OnClickListener{
 				.show();
 			}else{
 				setResult(RESULT_OK);
+				// TODO : Envoyer un mail au nouvel utilisateur
+				new AlertDialog.Builder(this)
+				.setTitle(R.string.info_title)
+				.setMessage(R.string.added_user)
+				.setPositiveButton(R.string.alert_ok_button, null)
+				.show();
 				finish();
 			}
 			break;
@@ -73,21 +88,25 @@ public class NewUsersActivity extends Activity implements OnClickListener{
 
 	/**
 	 * Ajoute un nouvel habitant
-	 * @return : -1 s'il manque des champs obligatoires,
-	 * 			-99 en cas de problème, 
-	 * 			sinon l'id de la maison créée
+	 * @return : ErrorHandler.MANDATORY_FIELDS s'il manque des champs obligatoires,
+	 * 			 ErrorHandler.UNKNOWN en cas de problème, 
+	 * 			 sinon l'id du user créé
 	 */
-	private int createUser(String newUserName, String newUserPass) {
-		int returnValue = -99;
+	private int createUser(String newUserName, String newUserPass, String newUserEmail) {
+		int returnValue = ErrorHandler.UNKNOWN;
 		// On vérifie les champs obligatoires
 
-		if (newUserName == "" || newUserPass == ""){
-			return -1;
+		if (newUserName == "" || newUserPass == "" || newUserEmail == ""){
+			return ErrorHandler.MANDATORY_FIELDS;
 		}
-		// On crée l'habitant
-		HouseHandler uc = new HouseHandlerSQL(this);
-		returnValue = uc.addUser(newUserName, newUserPass, houseId);
 
+
+		// TODO : check arguments formats
+		
+		// On crée l'habitant
+		HouseHandlerSQL hc = new HouseHandlerSQL(this);
+		returnValue = hc.addUser(newUserName, newUserPass, newUserEmail, houseId);
+		
 		return returnValue;
 	}
 }

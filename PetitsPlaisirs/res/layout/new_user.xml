@@ -10,6 +10,10 @@
 	<LinearLayout android:id="@+id/newUserList" style="@style/form.table"/>
  -->
 	<LinearLayout style="@style/form.table">
+		<TextView style="@style/form.label" android:text="@string/new_user_email"/>
+		<EditText android:id="@+id/newUserEmail"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"/>
 		<TextView style="@style/form.label" android:text="@string/new_user_name"/>
 		<EditText android:id="@+id/newUserName"
 			android:singleLine="true"

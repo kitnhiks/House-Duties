@@ -4,13 +4,14 @@ public class User {
 	private int id;
 	private String nom;
 	private String mdp;
+	private String email;
 	private int points;
  
 
 	public User(){}
  
-	public User(String nom){
-		this.nom = nom;
+	public User(String email){
+		this.email = email;
 	}
 
 	public int getId() {
@@ -47,5 +48,19 @@ public class User {
 	
 	public String toString(){
 		return "ID : "+id+"\nNom : "+nom+"\nPoints : "+points;
+	}
+
+	/**
+	 * @param email the email to set
+	 */
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	/**
+	 * @return the email
+	 */
+	public String getEmail() {
+		return email;
 	}
 }

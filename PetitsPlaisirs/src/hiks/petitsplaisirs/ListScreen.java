@@ -11,9 +11,8 @@ import android.os.Bundle;
  *
  */
 public abstract class ListScreen extends android.app.Activity {
-	protected int houseId;
 	protected int userId;
-	protected String userName;
+	protected String userEmail;
 	protected String userPass;
 	
     @Override
@@ -21,13 +20,12 @@ public abstract class ListScreen extends android.app.Activity {
         super.onCreate(savedInstanceState);
         
         Bundle extras = getIntent().getExtras();
-        houseId = extras.getInt("hiks.petitsplaisirs.houseId");
-        userName = extras.getString("hiks.petitsplaisirs.userName");
+        userEmail = extras.getString("hiks.petitsplaisirs.userEmail");
         userPass = extras.getString("hiks.petitsplaisirs.userPass");
         
         SessionHandler sh = new SessionHandler(this);
         // TODO : check userID ??? over securitas
-        userId = sh.checkUser(houseId, userName, userPass);
+        userId = sh.checkUser(userEmail, userPass);
 
         if (userId < 0){
         	// TODO : gérer la securitas, ouvrir une activité différente ?

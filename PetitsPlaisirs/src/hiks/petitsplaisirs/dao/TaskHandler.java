@@ -206,7 +206,7 @@ public class TaskHandler {
 	 * Ajoute une tache à une maison
 	 * @param task
 	 * @param houseId
-	 * @return 0 si c'est OK, -99 sinon
+	 * @return 0 si c'est OK, ErrorHandler.UNKNOWN sinon
 	 */
 	public int addTaskToHouse(Task task, int houseId){
 		return addTasksToHouse(new Task[] {task}, houseId);
@@ -216,7 +216,7 @@ public class TaskHandler {
 	 * Ajoute une liste de tache à une maison
 	 * @param tasks
 	 * @param houseId
-	 * @return 0 si c'est OK, -99 sinon
+	 * @return 0 si c'est OK, ErrorHandler.UNKNOWN sinon
 	 */
 	public int addTasksToHouse(Task[] tasks, int houseId){
 		String METHOD_NAME = "addTasksToHouse"; 
@@ -236,7 +236,7 @@ public class TaskHandler {
 			// Insertion des tâche de la maison
 			for (int i=0; i<nbTasks; i++){
 				result = insertTaskToHouse(tasks[i], houseId);
-				if (result == -1){ // Cas d'erreur
+				if (result == ErrorHandler.SQL_ERROR){ // Cas d'erreur
 					throw new Exception (METHOD_NAME+" : Erreur à l'insertion de la tâche "+tasks[i]);
 				}
 			}
@@ -246,7 +246,7 @@ public class TaskHandler {
 			return 0;
 		}catch(Exception e){
 			System.out.println(this.getClass().getName()+ " - "+ METHOD_NAME+ " : Erreur : "+e.getMessage());
-			return -99;
+			return ErrorHandler.UNKNOWN;
 		}
 	}
 
@@ -254,7 +254,7 @@ public class TaskHandler {
 	 * Associe une tâche à une maison
 	 * @param task
 	 * @param houseId
-	 * @return comme bdd.insert (i.e. : the row ID of the newly inserted row, or -1 if an error occurred)
+	 * @return The row ID of the newly inserted row, or ErrorHandler.SQL_ERROR if an error occurred
 	 */
 	private int insertTaskToHouse(Task task, int houseId){
 		ContentValues values = new ContentValues();
@@ -269,7 +269,7 @@ public class TaskHandler {
 	/**
 	 * Retire une tâche d'une maison
 	 * @param task
-	 * @return 0 si c'est OK, -99 sinon
+	 * @return 0 si c'est OK, ErrorHandler.UNKNOWN sinon
 	 */
 	public int removeTaskFromHouse(Task task){
 		String METHOD_NAME = "removeTaskFromHouse"; 
@@ -294,7 +294,7 @@ public class TaskHandler {
 			return 0;
 		}catch(Exception e){
 			System.out.println(this.getClass().getName()+ " - "+ METHOD_NAME+ " : Erreur : "+e.getMessage());
-			return -99;
+			return ErrorHandler.UNKNOWN;
 		}
 	}
 
@@ -345,7 +345,7 @@ public class TaskHandler {
 	 * Ajoute une tache à un user
 	 * @param task
 	 * @param userId
-	 * @return 0 si c'est OK, -99 sinon
+	 * @return 0 si c'est OK, ErrorHandler.UNKNOWN sinon
 	 */
 	public int addTaskToUser(Task task, int userId){
 		return addTasksToUser(new Task[] {task}, userId);
@@ -355,7 +355,7 @@ public class TaskHandler {
 	 * Ajoute une liste de tache à un user
 	 * @param tasks
 	 * @param userId
-	 * @return 0 si c'est OK, -99 sinon
+	 * @return 0 si c'est OK, ErrorHandler.UNKNOWN sinon
 	 */
 	public int addTasksToUser(Task[] tasks, int userId){
 		String METHOD_NAME = "addTasksToUser"; 
@@ -375,7 +375,7 @@ public class TaskHandler {
 			// Insertion des tâche du user
 			for (int i=0; i<nbTasks; i++){
 				result = insertTaskToUser(tasks[i], userId);
-				if (result == -1){ // Cas d'erreur
+				if (result == ErrorHandler.SQL_ERROR){ // Cas d'erreur
 					throw new Exception (METHOD_NAME+" : Erreur à l'insertion de la tâche au user "+tasks[i]);
 				}
 			}
@@ -394,7 +394,7 @@ public class TaskHandler {
 		}catch(Exception e){
 			System.out.println(this.getClass().getName()+ " - "+ METHOD_NAME+ " : Erreur : "+e.getMessage());
 			maBase.close();
-			return -99;
+			return ErrorHandler.UNKNOWN;
 		}
 	}
 
@@ -402,7 +402,7 @@ public class TaskHandler {
 	 * Associe une tâche à un user
 	 * @param task
 	 * @param id du user
-	 * @return comme bdd.insert (i.e. : the row ID of the newly inserted row, or -1 if an error occurred)
+	 * @return The row ID of the newly inserted row, or ErrorHandler.SQL_ERROR if an error occurred
 	 */
 	private int insertTaskToUser(Task task, int userId){
 		ContentValues values = new ContentValues();
@@ -417,7 +417,7 @@ public class TaskHandler {
 	/**
 	 * Retire une tâche d'un user et la rajoute à une maison
 	 * @param task
-	 * @return 0 si c'est OK, -99 sinon
+	 * @return 0 si c'est OK, ErrorHandler.UNKNOWN sinon
 	 */
 	public int ReturnTaskToHouse(Task task, int houseId){
 		String METHOD_NAME = "ReturnTaskToHouse"; 
@@ -449,7 +449,7 @@ public class TaskHandler {
 		}catch(Exception e){
 			System.out.println(this.getClass().getName()+ " - "+ METHOD_NAME+ " : Erreur : "+e.getMessage());
 			maBase.close();
-			return -99;
+			return ErrorHandler.UNKNOWN;
 		}
 	}
 	
@@ -457,7 +457,7 @@ public class TaskHandler {
 	/**
 	 * Retire une tâche d'un user
 	 * @param task
-	 * @return 0 si c'est OK, -99 sinon
+	 * @return 0 si c'est OK, ErrorHandler.UNKNOWN sinon
 	 */
 	public int removeTaskFromUser(Task task){
 		String METHOD_NAME = "removeTaskFromUser"; 
@@ -483,7 +483,7 @@ public class TaskHandler {
 		}catch(Exception e){
 			System.out.println(this.getClass().getName()+ " - "+ METHOD_NAME+ " : Erreur : "+e.getMessage());
 			maBase.close();
-			return -99;
+			return ErrorHandler.UNKNOWN;
 		}
 	}
 

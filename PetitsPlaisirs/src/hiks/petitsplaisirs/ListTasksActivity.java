@@ -21,6 +21,7 @@ import android.widget.AdapterView.OnItemClickListener;
  */
 public abstract class ListTasksActivity extends ListScreen {
 
+	protected int houseId;
 	protected Category[] listeCategories;
 	protected Task[] listeTasks;
 	protected String[] tasksNames;
@@ -30,6 +31,7 @@ public abstract class ListTasksActivity extends ListScreen {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
 	}
 
 	protected void generateLayout(){
@@ -43,7 +45,7 @@ public abstract class ListTasksActivity extends ListScreen {
 				Intent newIntent = new Intent(view.getContext(), ListHouseTasksActivity.class);
 				newIntent.putExtra("hiks.petitsplaisirs.userId", userId);
 				newIntent.putExtra("hiks.petitsplaisirs.houseId", houseId);
-				newIntent.putExtra("hiks.petitsplaisirs.userName", userName);
+				newIntent.putExtra("hiks.petitsplaisirs.userEmail", userEmail);
 				newIntent.putExtra("hiks.petitsplaisirs.userPass", userPass);
 				startActivityForResult(newIntent, 1);
 			}
@@ -51,6 +53,9 @@ public abstract class ListTasksActivity extends ListScreen {
 	}
 
 	protected void generateList(){
+		
+		houseId = getIntent().getExtras().getInt("hiks.petitsplaisirs.houseId");
+		
 		th = new TaskHandler(this);
 		listeTasks = th.getTasks();
 		int nbTasks = listeTasks.length;

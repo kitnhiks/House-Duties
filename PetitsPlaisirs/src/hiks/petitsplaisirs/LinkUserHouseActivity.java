@@ -3,6 +3,7 @@ package hiks.petitsplaisirs;
 import hiks.petitsplaisirs.dao.ErrorHandler;
 import hiks.petitsplaisirs.dao.HouseHandler;
 import hiks.petitsplaisirs.dao.HouseHandlerSQL;
+import hiks.petitsplaisirs.dao.SessionHandler;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -12,10 +13,10 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
 
-public class NewHouseActivity extends Activity implements OnClickListener{
+public class LinkUserHouseActivity extends Activity implements OnClickListener{
 
-	private String newHouseName;
-	private String newHousePass;
+	private String houseName;
+	private String housePass;
 	private String newUserName;
 	private String newUserEmail;
 	private String newUserPass;
@@ -25,7 +26,7 @@ public class NewHouseActivity extends Activity implements OnClickListener{
     public void onCreate(Bundle savedInstanceState) {
 		// Set layout
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.new_house);
+		setContentView(R.layout.link_user_house);
 	
 		// Add buttons listener
 		View validButton = findViewById(R.id.validButton);
@@ -36,25 +37,19 @@ public class NewHouseActivity extends Activity implements OnClickListener{
     public void onClick(View view) {
 		switch (view.getId()) {
 		case R.id.validButton:
-			newHouseName = ((EditText) findViewById(R.id.newHouseName)).getText().toString();
-			newHousePass = ((EditText) findViewById(R.id.newHousePass)).getText().toString();
+			houseName = ((EditText) findViewById(R.id.houseName)).getText().toString();
+			housePass = ((EditText) findViewById(R.id.housePass)).getText().toString();
 			newUserName = ((EditText) findViewById(R.id.newUserName)).getText().toString();
 			newUserEmail = ((EditText) findViewById(R.id.newUserEmail)).getText().toString();
 			newUserPass = ((EditText) findViewById(R.id.newUserPass)).getText().toString();
 
-			int houseId = createHouse();
+			int houseId = linkNewUserToHouse();
 		    if (houseId == ErrorHandler.MANDATORY_FIELDS) { // Cas des champs obligatoires manquant
 				new AlertDialog.Builder(this)
 					.setTitle(R.string.alert_title)
 					.setMessage(R.string.missing_mandatories)
 					.setPositiveButton(R.string.alert_ok_button, null)
 					.show();
-		    } else if (houseId == ErrorHandler.HOUSE_ALREADY_EXISTS) { // Cas d'une maison déjà existante
-				new AlertDialog.Builder(this)
-				.setTitle(R.string.alert_title)
-				.setMessage(R.string.house_already_exists)
-				.setPositiveButton(R.string.alert_ok_button, null)
-				.show();
 		    } else if (houseId == ErrorHandler.EMAIL_ALREADY_EXISTS) { // Cas d'un email déjà existante
 				new AlertDialog.Builder(this)
 				.setTitle(R.string.alert_title)
@@ -67,7 +62,13 @@ public class NewHouseActivity extends Activity implements OnClickListener{
 				.setMessage(R.string.user_already_exists)
 				.setPositiveButton(R.string.alert_ok_button, null)
 				.show();
-		    } else if (houseId == ErrorHandler.UNKNOWN) { // Cas d'erreur
+		    } else if (houseId==ErrorHandler.NOT_EXISTS){
+				new AlertDialog.Builder(this)
+				.setTitle(R.string.alert_title)
+				.setMessage(R.string.unknown_house)
+				.setPositiveButton(R.string.alert_ok_button, null)
+				.show();
+			} else if (houseId == ErrorHandler.UNKNOWN) { // Cas d'erreur
 				new AlertDialog.Builder(this)
 					.setTitle(R.string.alert_title)
 					.setMessage(R.string.unknown_error)
@@ -90,22 +91,29 @@ public class NewHouseActivity extends Activity implements OnClickListener{
     }
 
     /**
-     * Ajoute une nouvelle maison
+     * lie un nouvel user à une maison
      * @return : ErrorHandler.MANDATORY_FIELDS s'il manque des champs obligatoire,
-     * 			ErrorHandler.ALREADY_EXISTS si la maison existe déjà 
+     * 			ErrorHandler.USER_ALREADY_EXISTS si le user existe déjà 
      * 			ErrorHandler.UNKNOWN en cas de problème, 
-     * 			sinon l'id de la maison créée
+     * 			sinon l'id du user créé
      */
-    private int createHouse() {
+    private int linkNewUserToHouse() {
 		int returnValue = ErrorHandler.UNKNOWN;
 		// On vérifie les champs obligatoires
-		if ("".equals(newHouseName) || "".equals(newUserName) || "".equals(newUserEmail) || "".equals(newUserPass) || "".equals(newHousePass)) {
+		if ("".equals(houseName) || "".equals(newUserName) || "".equals(newUserEmail) || "".equals(newUserPass) || "".equals(housePass)) {
 		    returnValue = ErrorHandler.MANDATORY_FIELDS;
 		} else {
-		    // On crée la maison
-			HouseHandlerSQL hc = new HouseHandlerSQL(this);
-		    returnValue = hc.addHouse(newHouseName, newHousePass, newUserEmail, newUserName, newUserPass);
-		    // TODO : sortir la création de l'habitant de la création de la maison
+			SessionHandler sh = new SessionHandler(this);
+			// On récupère la maison
+			int houseId = sh.checkHouse(houseName, housePass);
+			if (houseId < 0){
+				returnValue = houseId; 
+			}else{
+			    // On crée le user
+				HouseHandlerSQL hc = new HouseHandlerSQL(this);
+			    returnValue = hc.addUser(newUserName, newUserPass, newUserEmail, houseId);
+			    // TODO : sortir la création de l'habitant de la création de la maison
+			}
 		}
 		return returnValue;
     }

@@ -48,11 +48,11 @@ public class HouseHandlerSQL extends HouseHandler {
 	/**
 	 * Supprime une maison
 	 * @param houseName le nom de la maison
-	 * @return nombre de ligne supprimées si la suppression a eu lieu (-1 si la maison n'existait pas, -99 en cas de problème)
+	 * @return nombre de ligne supprimées si la suppression a eu lieu (ErrorHandler.NOT_EXISTS si la maison n'existait pas, ErrorHandler.UNKNOWN en cas de problème)
 	 */
 	public int removeHouse(String houseName, String housePass){
 		String METHOD_NAME = "removeHouse"; 
-		int returnValue = -99;
+		int returnValue = ErrorHandler.UNKNOWN;
 		try{
 			// Check mandatory
 			if ("".equals(houseName) || "".equals(housePass)) {
@@ -66,24 +66,25 @@ public class HouseHandlerSQL extends HouseHandler {
 			int result;
 
 			// Check existence de la maison
-			result = sh.checkHouse(houseName);
-			if (result == -1){ // Cas de maison non trouvée
-				return -1;
+			result = sh.checkHouse(houseName, housePass);
+			if (result == ErrorHandler.NOT_EXISTS){ // Cas de maison non trouvée
+				returnValue = ErrorHandler.NOT_EXISTS;
+			}else{
+				int houseId = result;
+
+				// Suppression de la maison et des éléments associés (taches, users...)
+				result = deleteHouse(houseId);
+
+				returnValue = result;
 			}
-
-			int houseId = result;
-
-			// Suppression de la maison et des éléments associés (taches, users...)
-			result = deleteHouse(houseId);
-
-			returnValue = result;
 
 			close();
 
 			return returnValue;
 		}catch(Exception e){
 			System.out.println(this.getClass().getName()+ " - "+ METHOD_NAME+ " : Erreur : "+e.getMessage());
-			return -99;
+			close();
+			return ErrorHandler.UNKNOWN;
 		}
 	}
 
@@ -93,18 +94,20 @@ public class HouseHandlerSQL extends HouseHandler {
 	 * @param housePass le mot de passe de la maison
 	 * @param userName le nom de l'habitant
 	 * @param userPass le mot de passe de l'habitant
-	 * @return l'id de la maison (-1 si elle existe déjà, -99 en cas de problème)
+	 * @return l'id de la maison (ErrorHandler.ALREADY_EXISTS si elle existe déjà, ErrorHandler.UNKNOWN en cas de problème)
 	 */
-	public int addHouse(String houseName, String housePass, String userName, String userPass){
-		int returnValue = -99;
+	public int addHouse(String houseName, String housePass, String newUserEmail, String userName, String userPass){
+		int returnValue = ErrorHandler.UNKNOWN;
 
 		returnValue = addHouse (houseName, housePass);
 		if (returnValue > 0){ // Si la maison est bien insérée, on insère le user
 			int houseId = returnValue;
 
-			returnValue = addUser(userName, userPass, houseId);
+			returnValue = addUser(userName, userPass, newUserEmail, houseId);
 			if (returnValue > 0){ // Si tout s'est bien passé, on retourne l'id de la maison
 				returnValue = houseId;
+			}else{ // Sinon on supprime la maison qui vient d'être insérée
+				removeHouse(houseName, housePass);
 			}
 		}
 
@@ -115,11 +118,11 @@ public class HouseHandlerSQL extends HouseHandler {
 	 * Ajoute une nouvelle maison
 	 * @param houseName le nom de la maison
 	 * @param housePass le mot de passe de la maison
-	 * @return l'id de la maison (-1 si elle existe déjà, -99 en cas de problème)
+	 * @return l'id de la maison (ErrorHandler.ALREADY_EXISTS si elle existe déjà, ErrorHandler.UNKNOWN en cas de problème)
 	 */
 	private int addHouse(String houseName, String housePass){
 		String METHOD_NAME = "addHouse"; 
-		int returnValue = -99;
+		int returnValue = ErrorHandler.UNKNOWN;
 		try{
 			// Check mandatory
 			if ("".equals(houseName) || "".equals(housePass)) {
@@ -133,31 +136,34 @@ public class HouseHandlerSQL extends HouseHandler {
 			int result;
 
 			// Check unicité du nom de la maison
-			result = sh.checkHouse(houseName);
-			if (result != -1){ // Cas de maison trouvée
-				return -1;
-			}
+			result = sh.checkHouse(houseName, housePass);
+			if (result != ErrorHandler.NOT_EXISTS){ // Cas de maison trouvée
+				returnValue = ErrorHandler.HOUSE_ALREADY_EXISTS;
+			}else{
 
-			// Insertion de la maison
-			House newHouse = new House(houseName, housePass);
-			result = insertHouse(newHouse);
-			if (result == -1){ // Cas d'erreur
-				throw new Exception (METHOD_NAME+" : Erreur à l'insertion de la maison");
-			}
+				// Insertion de la maison
+				House newHouse = new House(houseName, housePass);
+				result = insertHouse(newHouse);
+				if (result == ErrorHandler.SQL_ERROR){ // Cas d'erreur
+					throw new Exception (METHOD_NAME+" : Erreur à l'insertion de la maison");
+				}
+	
+				// Récupération de l'Id de la maison
+				result = sh.checkHouse(houseName, housePass);
+				if (result < 0){ // Cas de maison non trouvée (alors que je viens de l'insérer...)
+					throw new Exception (METHOD_NAME+" : Erreur pour récupérer ma maison insérée :(");
+				}
+				returnValue = result;
 
-			// Récupération de l'Id de la maison
-			result = sh.checkHouse(houseName);
-			if (result < 0){ // Cas de maison non trouvée (alors que je viens de l'insérer...)
-				throw new Exception (METHOD_NAME+" : Erreur pour récupérer ma maison insérée :(");
 			}
-			returnValue = result;
-
+			
 			close();
 
 			return returnValue;
 		}catch(Exception e){
+			close();
 			System.out.println(this.getClass().getName()+ " - "+ METHOD_NAME+ " : Erreur : "+e.getMessage());
-			return -99;
+			return ErrorHandler.UNKNOWN;
 		}
 	}
 
@@ -165,139 +171,172 @@ public class HouseHandlerSQL extends HouseHandler {
 	 * Ajoute un nouvel habitant
 	 * @param userName le nom de l'habitant
 	 * @param userPass le mot de passe
+	 * @param userEmail l'e-mail
 	 * @param houseId l'id de la maison
-	 * @return l'id du user si tout s'est bien passé (-99 en cas de problème)
+	 * @return l'id du user si tout s'est bien passé (
+	 * 	ErrorHandler.EMAIL_ALREADY_EXISTS, si l'e-mail existe déjà,
+	 *  ErrorHandler.USER_ALREADY_EXISTS, si l'user existe déjà, 
+	 * 	ErrorHandler.UNKNOWN en cas de problème
+	 * )
 	 */
-	public int addUser(String userName, String userPass, int houseId){
+	public int addUser(String userName, String userPass, String userEmail, int houseId){
+		// TODO : Copier cette methode pour les autres
 		String METHOD_NAME = "addUser"; 
+		int returnValue = ErrorHandler.UNKNOWN;
 		try{
 			// Check arguments
-			if ("".equals(userName) || "".equals(userPass)) {
-				throw new Exception (METHOD_NAME+" : Mauvais parammètres");
+			if ("".equals(userName) || "".equals(userPass) || "".equals(userEmail)) {
+				throw new Exception ("Mauvais paramètres");
 			}
-
+			
 			open();
 			int result;
 
 			// Check existence de la maison
 			House house = getHouseById(houseId);
 			if (house == null){ // Cas de maison non trouvée
-				throw new Exception (METHOD_NAME+" : Id de la maison inexistant");
+				throw new Exception ("Id de la maison inexistant");
 			}
 
-			// Check unicité du user
-			result = sh.checkUser(houseId, userName, userPass);
-			if (result != -1){ // Cas de user trouvée
-				return -1;
+			int userId;
+			// Vérifier si l'habitant existe déjà
+			userId = getUserId(userPass, userEmail);
+			if (userId == ErrorHandler.NOT_EXISTS){
+				if (isEmailKnown(userEmail)){
+					returnValue = ErrorHandler.EMAIL_ALREADY_EXISTS;
+					throw new Exception (userEmail+" existe déjà");
+				}else{
+					// Insertion de l'habitants
+					User tmpUser;
+					tmpUser = new User(Tools.escapeDataChars(userEmail));
+					tmpUser.setMdp(Tools.escapeDataChars(userPass));
+					tmpUser.setNom(Tools.escapeDataChars(userName));
+					userId = insertUser(tmpUser);
+					if (userId == ErrorHandler.SQL_ERROR){ // Cas d'erreur
+						throw new Exception ("Erreur à l'insertion du user "+userName);
+					}
+				}
+			}else{
+				// Vérifier s'il est lié à la maison
+				if (doUserExistsInHouse(userName, userPass, userEmail, houseId)){
+					returnValue = ErrorHandler.USER_ALREADY_EXISTS;
+					throw new Exception (userName+" existe déjà");
+				}
 			}
-
-			// Insertion des habitants de la maison
-			User tmpUser;
-			tmpUser = new User(Tools.escapeDataChars(userName));
-			tmpUser.setMdp(Tools.escapeDataChars(userPass));
-			result = insertUser(tmpUser);
-			if (result == -1){ // Cas d'erreur
-				throw new Exception (METHOD_NAME+" : Erreur à l'insertion du user "+userName);
+			
+			// Vérifier si le nom est déjà utilisé pour la maison
+			int nbHomonymous = countHomonymous(userName, houseId);
+			if (nbHomonymous!=0){
+				userName = userName + " ("+(nbHomonymous+1)+")";
 			}
-
-
-			// Check existence du user
-			int userId = sh.checkUser(userName, userPass);
-			if (userId < 0){ // Cas de user non trouvée (alors que je viens de l'insérer...)
-				throw new Exception (METHOD_NAME+" : Erreur pour récupérer mon user insérée ("+userName+")");
-			}
-
+			
 			result = linkUserHouse(userId, houseId);
-			if (result == -1){ // Cas d'erreur
-				throw new Exception (METHOD_NAME+" : Erreur à l'insertion du lien du user "+userName);
-			}				
+			if (result == ErrorHandler.SQL_ERROR){ // Cas d'erreur
+				throw new Exception ("Erreur à l'insertion du lien du user "+userName);
+			}
 
+			returnValue = userId;
 			close();
-
-			return userId;
+			return returnValue;
+			
 		}catch(Exception e){
 			System.out.println(this.getClass().getName()+ " - "+ METHOD_NAME+ " : Erreur : "+e.getMessage());
-			return -99;
+			close();
+			return returnValue;
 		}
 	}
 
-	/**
-	 * Ajoute des nouveaux habitants
-	 * @param userName la liste des noms d'habitant
-	 * @param userPass la liste des mots de passes
-	 * @param houseId l'id de la maison
-	 * @return 0 si tout s'est bien passé (-99 en cas de problème)
-	 */
-	public int addUsers(String[] usersName, String[] usersPass, int houseId){
-		String METHOD_NAME = "addUser"; 
-		try{
-			// Check arguments
-			if (usersName == null || usersPass == null || usersName.length != usersPass.length) {
-				throw new Exception (METHOD_NAME+" : Mauvais parammètres");
-			}
-			int nbUser = usersName.length;
-			// Check mandatory
-			if (nbUser == 0) {
-				throw new Exception (METHOD_NAME+" : Aucun habitant à insérer");
-			}
+	private int getUserId(String userPass, String userEmail) {
+		int returnValue = ErrorHandler.UNKNOWN;
+		
+		Cursor c = bdd.query(DBAccess.user_TABLE, 
+				new String[] {
+					DBAccess.user_TABLE_COL_ID
+					},
+				DBAccess.user_TABLE_COL_EMAIL + " = \"" + userEmail +"\""+" AND "+ 
+				DBAccess.user_TABLE_COL_MDP + " = \"" + userPass +"\"", 
+				null, null, null, null);
 
-			open();
-			int result;
-
-			// Check existence de la maison
-			House house = getHouseById(houseId);
-			if (house == null){ // Cas de maison non trouvée
-				throw new Exception (METHOD_NAME+" : Id de la maison inexistant");
-			}
-
-			// Insertion des habitants de la maison
-			User tmpUser;
-			for (int i=0; i<nbUser; i++){
-				// Check unicité du user
-				result = sh.checkUser(houseId, usersName[i], usersPass[i]);
-				if (result != -1){ // Cas de user trouvée
-					return -1;
-				}
-
-				tmpUser = new User(Tools.escapeDataChars(usersName[i]));
-				tmpUser.setMdp(Tools.escapeDataChars(usersPass[i]));
-				result = insertUser(tmpUser);
-				if (result == -1){ // Cas d'erreur
-					throw new Exception (METHOD_NAME+" : Erreur à l'insertion du user "+usersName[i]);
-				}
-
-
-				// Check existence du user
-				int userId = sh.checkUser(house.getId(), usersName[i], usersPass[i]);
-				if (userId < 0){ // Cas de user non trouvée (alors que je viens de l'insérer...)
-					throw new Exception (METHOD_NAME+" : Erreur pour récupérer mon user insérée ("+usersName[i]+")");
-				}
-
-				result = linkUserHouse(userId, houseId);
-				if (result == -1){ // Cas d'erreur
-					throw new Exception (METHOD_NAME+" : Erreur à l'insertion du lien du user "+usersName[i]);
-				}
-
-			}
-
-			close();
-
-			return 0;
-		}catch(Exception e){
-			System.out.println(this.getClass().getName()+ " - "+ METHOD_NAME+ " : Erreur : "+e.getMessage());
-			return -99;
+		if (c.getCount() == 0){
+			returnValue = ErrorHandler.NOT_EXISTS;
+		}else if (c.getCount() == 1){
+			c.moveToFirst();
+			returnValue = c.getInt(c.getColumnIndexOrThrow(DBAccess.user_TABLE_COL_ID));
 		}
+		
+		c.close();
+		return returnValue;
+	}
+
+	private int countHomonymous(String userName, int houseId) {
+		int returnValue = 0;
+		Cursor c = bdd.query(DBAccess.user_TABLE+
+				" INNER JOIN "+
+				DBAccess.user_house_TABLE+
+				" ON ("+DBAccess.user_house_TABLE_COL_IDUSER+
+				" = "+DBAccess.user_TABLE_COL_ID+")", 
+				new String[] {
+					DBAccess.user_TABLE_COL_ID
+					},
+				DBAccess.user_house_TABLE_COL_IDHOUSE + " = " + houseId +" AND "+"("+
+				"LOWER("+DBAccess.user_TABLE_COL_NOM + ") = \"" + userName.toLowerCase() +"\"" + " OR " +
+				"LOWER("+DBAccess.user_TABLE_COL_NOM + ") LIKE \"" + userName.toLowerCase() +" (%)\""+")",
+				null, null, null, null);
+
+		returnValue = c.getCount();
+		c.close();
+		return returnValue;
+	}
+
+	private boolean doUserExistsInHouse(String userName, String userPass, String userEmail, int houseId) {
+		boolean returnValue = false;
+		
+		Cursor c = bdd.query(DBAccess.user_TABLE+
+				" INNER JOIN "+
+				DBAccess.user_house_TABLE+
+				" ON ("+DBAccess.user_house_TABLE_COL_IDUSER+
+				" = "+DBAccess.user_TABLE_COL_ID+")", 
+				new String[] {
+					DBAccess.user_TABLE_COL_ID
+					},
+				DBAccess.user_house_TABLE_COL_IDHOUSE + " = " + houseId +" AND "+
+				"LOWER("+DBAccess.user_TABLE_COL_NOM + ") = \"" + userName.toLowerCase() +"\" AND "+
+				DBAccess.user_TABLE_COL_MDP + " = \"" + userPass +"\" AND "+
+				DBAccess.user_TABLE_COL_EMAIL + " = \"" + userEmail +"\"", 
+				null, null, null, null);
+
+		returnValue = c.getCount() != 0;
+
+		c.close();
+ 
+		return returnValue;
+	}
+
+	
+	private boolean isEmailKnown(String userEmail) {
+		boolean returnValue = false;
+		Cursor c = bdd.query(DBAccess.user_TABLE, 
+				new String[] {
+					DBAccess.user_TABLE_COL_ID
+					},
+				DBAccess.user_TABLE_COL_EMAIL + " = \"" + userEmail +"\"", 
+				null, null, null, null);
+
+		returnValue = c.getCount() != 0;
+		c.close();
+		return returnValue;
 	}
 
 	/**
 	 * Insert un habitant dans la base
 	 * @param user
 	 * @param house
-	 * @return comme bdd.insert (i.e. : the row ID of the newly inserted row, or -1 if an error occurred)
+	 * @return The row ID of the newly inserted row, or ErrorHandler.SQL_ERROR if an error occurred
 	 */
 	private int insertUser(User user){
 		ContentValues values = new ContentValues();
 		values.put(DBAccess.user_TABLE_COL_NOM, user.getNom());
+		values.put(DBAccess.user_TABLE_COL_EMAIL, user.getEmail());
 		values.put(DBAccess.user_TABLE_COL_MDP, user.getMdp());
 		return (int) bdd.insert(DBAccess.user_TABLE, null, values);
 	}
@@ -306,7 +345,7 @@ public class HouseHandlerSQL extends HouseHandler {
 	 * Insert un lien habitant-maison dans la base
 	 * @param user
 	 * @param house
-	 * @return comme bdd.insert (i.e. : the row ID of the newly inserted row, or -1 if an error occurred)
+	 * @return The row ID of the newly inserted row, or ErrorHandler.SQL_ERROR if an error occurred
 	 */
 	private int linkUserHouse(int userId, int houseId){
 		ContentValues values = new ContentValues();
@@ -345,7 +384,7 @@ public class HouseHandlerSQL extends HouseHandler {
 	/**
 	 * Insert une maison dans la base
 	 * @param maison
-	 * @return comme bdd.insert (i.e. : the row ID of the newly inserted row, or -1 if an error occurred)
+	 * @return the row ID of the newly inserted row, or ErrorHandler.SQL_ERROR if an error occurred
 	 */
 	private int insertHouse(House maison){
 		ContentValues values = new ContentValues();

@@ -5,18 +5,12 @@
 	</TableLayout>
 	
 	<LinearLayout style="@style/form.table">
-			<EditText android:id="@+id/houseName"
-				android:singleLine="true"
-				android:layout_height="wrap_content"
-				android:layout_width="fill_parent"
-				android:maxLength="50"
-				android:text="@string/enter_house_name"/>
-			<EditText android:id="@+id/userName"
+			<EditText android:id="@+id/userEmail"
 				android:singleLine="true"
 				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
 				android:maxLength="50"
-				android:text="@string/enter_user_name"/>
+				android:text="@string/enter_user_email"/>
 			<EditText android:id="@+id/userPass"
 				android:singleLine="true"
 				android:layout_width="fill_parent"
